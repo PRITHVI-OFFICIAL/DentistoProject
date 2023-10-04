@@ -4,10 +4,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 
 const Login = () => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
-  const [capturedPhotos, setCapturedPhotos] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]);
+
+
+const [hasPermission, setHasPermission] = useState(null);
+const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+const [capturedPhotos, setCapturedPhotos] = useState([]);
+const [selectedImages, setSelectedImages] = useState([]);
 
 
   return (

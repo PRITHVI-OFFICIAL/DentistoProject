@@ -1,80 +1,119 @@
 import React from 'react';
-import { Modal, View, Image, Button,Text,StyleSheet, TouchableOpacity } from 'react-native';
+import { Modal, View, Image, Button,Text,StyleSheet, TouchableOpacity , Dimensions } from 'react-native';
 import Colors from '../Colors';
 import { ScrollView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
+
+const { width } = Dimensions.get('window');
+
+
 const Home = () => {
   const navigation = useNavigation();
   
   return (
-    <View style={styles.container}>
-        <View style={{height:150,backgroundColor:Colors.primary,flexDirection:"row",justifyContent:"space-between",padding:15,paddingTop:70}}>
-
-      <View style={{justifyContent:"center"}}>
-        <Text style={{fontSize:20,color:"white",fontWeight:"300"}}>Hello !</Text>
-        <Text style={{fontSize:30,color:"white",fontWeight:"500"}}>Prithvi PK</Text>
-
+    <ScrollView style={styles.container}>
+      <View
+      style={{
+        height: 113,
+        backgroundColor: Colors.primary,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15,
+        paddingTop: 50
+      }}
+    >
+      <View style={{ justifyContent: 'center' }}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: 'white',
+            fontWeight: '300',
+          }}
+        >
+          Hello!
+        </Text>
+        <Text
+          style={{
+            fontSize: 26,
+            color: 'white',
+            fontWeight: '500',
+          }}
+        >
+          Prithvi PK
+        </Text>
       </View>
 
       <View>
-
-      <Image
-        source={require("../assets/teethHome.png")}
-        style={{ width: 80, height: 80}}
-       />
-      
-
+        <Image
+          source={require('../assets/teethHome.png')}
+          style={{ width: 80, height: 80 }}
+        />
       </View>
-
-        </View>
+    </View>
 
         {/* <Text style={styles.heading}>Products</Text> */}
 
         <View>
-        <ScrollView horizontal style={{paddingRight:20}}  pagingEnabled={true} >
+        <ScrollView
+      horizontal
+      pagingEnabled={true}
+    >
+      <View
+        style={{
+          height: 200,
+          backgroundColor: 'black',
+          borderRadius: 15,
+          width: width - 40, // Adjust the width according to the screen size
+          margin: 20,
+        }}
+      >
+        <Image
+          source={{
+            uri:
+              'https://media.istockphoto.com/id/636069054/vector/electric-toothbrush-ads.jpg?s=612x612&w=0&k=20&c=gJE2IvrvDiJcmsCaZmG1WAQbUw0UZO3OkWjVBrdNsIw=',
+          }}
+          style={{ width: '100%', height: '100%', borderRadius: 15 }}
+        />
+      </View>
 
-<View style={{height:200,backgroundColor:Colors.black,borderRadius:15,width:380,margin:20}}>
+      <View
+        style={{
+          height: 200,
+          backgroundColor: 'yellow',
+          borderRadius: 15,
+          width: width - 40, // Adjust the width according to the screen size
+          margin: 20,
+        }}
+      >
+        <Image
+          source={{
+            uri:
+              'https://img.freepik.com/free-vector/realistic-fresh-toothpaste-poster-ad_52683-11904.jpg?w=996&t=st=1692805015~exp=1692805615~hmac=c4969b8f910c4efdab2399eb6c2128c83abdbb1e28b18b706ff9da5c440952a1',
+          }}
+          style={{ width: '100%', height: '100%', borderRadius: 15 }}
+        />
+      </View>
 
-<Image 
-   source={{uri:'https://media.istockphoto.com/id/636069054/vector/electric-toothbrush-ads.jpg?s=612x612&w=0&k=20&c=gJE2IvrvDiJcmsCaZmG1WAQbUw0UZO3OkWjVBrdNsIw='}}
-   style={{width:"100%",height:"100%",borderRadius:15}}
-/>
-
-
-
-
-
-</View> 
-
-<View style={{height:200,backgroundColor:'yellow',borderRadius:15,width:385,margin:20}}>
-
-
-  <Image 
-   source={{uri:'https://img.freepik.com/free-vector/realistic-fresh-toothpaste-poster-ad_52683-11904.jpg?w=996&t=st=1692805015~exp=1692805615~hmac=c4969b8f910c4efdab2399eb6c2128c83abdbb1e28b18b706ff9da5c440952a1'}}
-   style={{width:"100%",height:"100%",borderRadius:15}}
-  />
-
-
-
-</View> 
-
-
-<View style={{height:200,backgroundColor:'yellow',borderRadius:15,width:385,margin:20}}>
-
-
-  <Image 
-   source={{uri:'https://img.freepik.com/premium-photo/composition-with-tools-dental-care-blue-surface_185193-15015.jpg?w=996'}}
-   style={{width:"100%",height:"100%",borderRadius:15}}
-  />
-
-
-
-</View>
-
-
-</ScrollView>
+      <View
+        style={{
+          height: 200,
+          backgroundColor: 'yellow',
+          borderRadius: 15,
+          width: width - 40, // Adjust the width according to the screen size
+          margin: 20,
+        }}
+      >
+        <Image
+          source={{
+            uri:
+              'https://img.freepik.com/premium-photo/composition-with-tools-dental-care-blue-surface_185193-15015.jpg?w=996',
+          }}
+          style={{ width: '100%', height: '100%', borderRadius: 15 }}
+        />
+      </View>
+    </ScrollView>
         </View>
 
         {/* <View>
@@ -255,7 +294,7 @@ const Home = () => {
     
 
         
-    </View>
+    </ScrollView>
   );
 };
 

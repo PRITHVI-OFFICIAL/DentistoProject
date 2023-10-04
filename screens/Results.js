@@ -12,6 +12,7 @@ const Results = ({route}) => {
 
     console.log(front);
     
+    //'https://www.plagedentistry.com/wp-content/uploads/2020/10/dental-caries-web.jpeg'
 
     const handleUpload = async () => {
        
@@ -23,30 +24,34 @@ const Results = ({route}) => {
         });
     
         try {
-          const response = await axios.post('http://172.16.4.23:8000/detect/', formData, {
+          const response = await axios.post('https://dentiso-api2.onrender.com/detect/', formData, {
             headers: {
                 'Accept': 'application/json',
               'Content-Type': 'multipart/form-data',
             },
-           //responseType: 'blob', 
+           responseType: 'blob', 
           });
+          const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
+          const reader = new FileReader();
+          reader.onload = () => {
+          // Use the Data URL to display the image
+          const imageUrl = reader.result;
+          setbox(imageUrl);
+      
+          console.log('Image URL:', imageUrl);
 
-          //console.log(response.data,'--,');
-    
-          // const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
-          // const imageUrl = URL.createObjectURL(imageBlob);
-          // console.log(imageUrl)
-          // setResult(imageUrl);
-          //console.log(response,'--->');
-          //console.log(response,'&*&&*^&^*&^&*');
-          setResult(`data:image/jpeg;base64,${response.data.uri}`);
-          setbox(response.data.data);
+    // Now, you can set this imageUrl in your component's state or use it to display the image
+  };
+
+  reader.readAsDataURL(imageBlob);
         } catch (error) {
           console.error('Error detecting objects:', error);
         }
       };
 
-      console.log(box);
+      //console.log(box,"---->");
+
+      handleUpload();
 
 
     // const handleUpload= async () => {
@@ -73,16 +78,14 @@ const Results = ({route}) => {
     // };
       //console.log(result,'99999');
  
-    
+    //console.log(front);
  
   return (
     <View style={styles.container}>
       <Text
-        style={{ fontSize: 22, fontWeight: "bold", color: "black", margin: 5 }}
-      >
+        style={{ fontSize: 22, fontWeight: "bold", color: "black", margin: 5 }}>
         Results
       </Text>
-
       <View
         style={{
           width: "100%",
@@ -91,7 +94,12 @@ const Results = ({route}) => {
           backgroundColor: "black",
           marginTop: 5,
         }}
-      ></View>
+      >
+
+
+        <Image source={{uri:box}} style={{width:"100%",height:"100%",borderRadius:10}}/>
+
+      </View>
 
       <ScrollView  horizontal   
       showsHorizontalScrollIndicator={true}

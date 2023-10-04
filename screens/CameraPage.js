@@ -20,9 +20,9 @@ const CameraPage = ({route}) => {
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.on);
   const [imageUri, setImageUri] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const isFocused = useIsFocused();
-  const [modalVisible1, setModalVisible1] = useState(true);
 
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const isFocused = useIsFocused();
 
   
   const navigation =useNavigation();
@@ -159,9 +159,7 @@ const CameraPage = ({route}) => {
     
     
     <View style={{backgroundColor:"white",flex:1,width:"100%",}} >
-      {
-        isFocused && 
-        <Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible1}
@@ -187,14 +185,17 @@ const CameraPage = ({route}) => {
 
             <View style={{width:300,height:250,marginTop:10,marginLeft:20,padding:30}}>
 
-            <Text style={{fontSize:25,fontWeight:"bold",color:"#0466CB"}}>Front Teeth</Text>
-            <Text style={{color:Colors.gray,marginTop:20,fontSize:14}}>1. Aim your Camera at your mouth</Text>
+            <Text style={{fontSize:25,fontWeight:"bold",color:"#0466CB"}}>Captured Image</Text>
+            <Text style={{color:Colors.gray,marginTop:20,fontSize:14}}>Tips</Text>
+            <Text style={{color:Colors.gray,marginTop:10,fontSize:14}}>1. Take your photo in bright area</Text>
+            <Text style={{color:Colors.gray,marginTop:10,fontSize:14}}>2. Click the specific Region</Text>
+            {/* <Text style={{color:Colors.gray,marginTop:20,fontSize:14}}>1. Aim your Camera at your mouth</Text>
             <Text style={{color:Colors.gray,marginTop:10,fontSize:14}}>2. Open your mouth wide</Text>
-            <Text style={{color:Colors.gray,marginTop:10,fontSize:14}}>3. Press Camera Button to take Picture</Text>
+            <Text style={{color:Colors.gray,marginTop:10,fontSize:14}}>3. Press Camera Button to take Picture</Text> */}
 
             <TouchableOpacity onPress={()=>setModalVisible1(!modalVisible1)}>
         <View style={{height:40,width:200,backgroundColor:"#0466CB",borderRadius:10,justifyContent:"center",marginTop:40}}>
-      <Text style={{color:"white",fontWeight:"600",alignSelf:"center",fontSize:17}}>Let's Take Picture</Text>
+      <Text style={{color:"white",fontWeight:"600",alignSelf:"center",fontSize:17}}>Done</Text>
       {/* <Ionicons name="camera-outline" size={25} color="white"  style={{alignSelf:"center"}}/> */}
 
         </View>
@@ -210,7 +211,6 @@ const CameraPage = ({route}) => {
           </View>
         </View>
       </Modal>
-      }
 
 {/* <Pressable
         style={[styles.button, styles.buttonOpen,]}

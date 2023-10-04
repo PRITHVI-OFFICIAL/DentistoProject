@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import CameraScreen from './screens/CameraScreen';
 import Login from './screens/Login';
 import StartScreen from './screens/StartScreen';
 
@@ -52,7 +51,7 @@ function HomeStack() {
       <Tab.Screen name="Home" component={Home}  options={{ tabBarIcon:({size,color,focused})=>(
             <Ionicons name="md-home-outline" size={25} color={focused?Colors.primary:'grey'} />
           ),}} />
-      <Tab.Screen name="Articles" component={Articles} options={{ tabBarIcon:({size,color,focused})=>(
+      <Tab.Screen name="Blogs" component={Articles} options={{ tabBarIcon:({size,color,focused})=>(
             <Ionicons name="newspaper-outline" size={25} color={focused?Colors.primary:'grey'} />
           ),}} />
         
@@ -62,7 +61,7 @@ function HomeStack() {
        
            
       
-      <Tab.Screen name="Book Appointment" component={BookAppointment} options={{ tabBarIcon:({size,color,focused})=>(
+      <Tab.Screen name="BookAppointment" component={BookAppointment} options={{ tabBarIcon:({size,color,focused})=>(
             <Ionicons name="checkbox-outline" size={25} color={focused?Colors.primary:'grey'} />
           ),}} />
 
