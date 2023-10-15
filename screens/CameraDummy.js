@@ -12,7 +12,7 @@ const CameraDummy = () => {
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [capturedPhotos, setCapturedPhotos] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
-  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.on);
+  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const navigation =useNavigation();
   const isFocused = useIsFocused();
 
@@ -73,7 +73,7 @@ const CameraDummy = () => {
   const toggleFlashMode = () => {
     setFlashMode(
       flashMode === Camera.Constants.FlashMode.off
-        ? Camera.Constants.FlashMode.torch
+        ? Camera.Constants.FlashMode.off
         : Camera.Constants.FlashMode.off
     );
   };

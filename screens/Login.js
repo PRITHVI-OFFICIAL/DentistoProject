@@ -1,26 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image, ScrollView, TouchableOpacity ,ImageBackground} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Camera } from 'expo-camera';
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert,  } from "react-native";
+import { signInWithEmailAndPassword,fetchSignInMethodsForEmail,createUserWithEmailAndPassword } from "firebase/auth";
+import { auth} from "../config/firebase";
+import colors from "../Colors";
+import { doc, setDoc } from "firebase/firestore"; 
+import { useNavigation } from "@react-navigation/native";
 
-const Login = () => {
+export default function Login({navigation}) {
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navi = useNavigation();
 
-const [hasPermission, setHasPermission] = useState(null);
-const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
-const [capturedPhotos, setCapturedPhotos] = useState([]);
-const [selectedImages, setSelectedImages] = useState([]);
-
-
-  return (
-    <View style={{backgroundColor:"#53A1EF",flex:1,width:"100%",padding:45}} >
-        <Text>Hii</Text>
  
+
+  const onHandleLogin = () => {
+    if ((email !== "" && password !== "") && email.split('@')[1]=='sairamtap.edu.in') {
+
+          signInWithEmailAndPassword(auth, email, password)
+          .then(() => navi.navigate('Busroute'))
+          .catch((err) => Alert.alert('Login Failed', `Kindly Check your Mail id and Password`, [
+            { text: 'OK' },
+          ]));
+    }
+    else{
+      Alert.alert('Login Failed', `Kindly Check your Mail id and Password`, [
+        { text: 'OK' },
+      ])
+    }
+  };
+  
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>Dentisto</Text>
+      <View style={styles.subcontainer}>
+      <Text style={{fontSize:25,fontWeight:"bold",color:colors.primary,textAlign:"center",paddingTop:10}}>Login</Text>
+      <View style={styles.logincontainer}> 
+      <TextInput
+                style={styles.loginbox}
+                placeholder=" Enter your admin Id"
+                autoCapitalize="none"
+                autoCorrect={false}
+                
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+        />
+
+      <TextInput
+                style={styles.loginbox}
+                placeholder=" Enter password"
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry={true}
+                textContentType="password"
+                value={password}
+              
+                onChangeText={(text) => setPassword(text)}
+       />
+      </View>
+      
+
+      <View style={{justifyContent:"center",alignItems:"center"}}  >
+        <TouchableOpacity style={{height:60,width:150,backgroundColor:colors.primary,borderRadius:6,justifyContent:"center",alignItems:"center",margin:20}} onPress={()=> navigation.navigate('Home')}>
+            <Text style={{fontSize:15,color:"white",fontWeight:"bold"}}>Login</Text>
+        </TouchableOpacity>
+      </View>
+      </View>
     </View>
   );
-};
+}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    justifyContent:"center", 
+    alignItems:"center"
+  },
+  subcontainer:{
+    width:320,
+    height: 400,
+    backgroundColor:"white",
+    borderRadius:15, 
+    padding:10
+  }, 
+  heading:{
+    fontSize:40, 
+    fontWeight:"bold",
+    color:"white", 
+    fontStyle:"italic", 
+    bottom:20
+  },
+  logincontainer:{
 
-export default Login;
+    height:200, 
+    backgroundColor:"white", 
+    justifyContent:"space-evenly",  
+    alignItems:"center"
+  },
 
-
-
+  loginbox:{
+    borderWidth:1,
+    borderColor:colors.primary, 
+    width:"90%", 
+    height:50,  
+    borderRadius:5,
+    paddingHorizontal:10
+    
+  }, 
+  
+});

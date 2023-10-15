@@ -37,7 +37,8 @@ function HomeStack() {
         activeTintColor: 'red',
         tabBarActiveBackgroundColor:"#f2f2f2",
         tabBarStyle:  { height: 60},
-        tabBarLabelStyle:{paddingBottom:8}
+        tabBarLabelStyle:{paddingBottom:8},
+        defaultScreenOption:{Login}
       }
       
     }
@@ -47,11 +48,12 @@ function HomeStack() {
 
 
       
-
+  
+<Tab.Screen name="Login" component={Login} options={{ tabBarVisible: true,tabBarButton: (props) => null,tabBarStyle: { display: "none" ,}}}  />   
       <Tab.Screen name="Home" component={Home}  options={{ tabBarIcon:({size,color,focused})=>(
             <Ionicons name="md-home-outline" size={25} color={focused?Colors.primary:'grey'} />
           ),}} />
-      <Tab.Screen name="Blogs" component={Articles} options={{ tabBarIcon:({size,color,focused})=>(
+      <Tab.Screen name="Reports" component={Articles} options={{ tabBarIcon:({size,color,focused})=>(
             <Ionicons name="newspaper-outline" size={25} color={focused?Colors.primary:'grey'} />
           ),}} />
         
@@ -74,6 +76,7 @@ function HomeStack() {
 <Tab.Screen name="CameraPage" component={CameraPage} options={{ tabBarVisible: false,tabBarButton: (props) => null,tabBarStyle: { display: "none" ,},screenOptions:{ScreenOrientation: 'landscape'}}} />
 <Tab.Screen name="CameraDummy" component={CameraDummy} options={{ tabBarVisible: false,tabBarButton: (props) => null,tabBarStyle: { display: "none" ,},screenOptions:{ScreenOrientation: 'landscape'}}} />
 <Tab.Screen name="Results" component={Results} options={{ tabBarVisible: true,tabBarButton: (props) => null}}  />     
+
 
 
        

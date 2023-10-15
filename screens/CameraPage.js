@@ -9,6 +9,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import Colors from '../Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 
 
 const CameraPage = ({route}) => {
@@ -17,7 +18,7 @@ const CameraPage = ({route}) => {
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [capturedPhotos, setCapturedPhotos] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
-  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.on);
+  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const [imageUri, setImageUri] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -27,16 +28,7 @@ const CameraPage = ({route}) => {
   
   const navigation =useNavigation();
 
-  // useEffect(() => {
-  //   // Set isModalVisible to true when entering Page B
-  //   setModalVisible1(true);
-  //   return () => {
-  //     // Set isModalVisible to false when leaving Page B
-  //     setModalVisible1(false);
-  //   };
-  // }, []);
 
-  //console.log(imagetype);
   
 
   useEffect(() => {
@@ -104,14 +96,45 @@ const CameraPage = ({route}) => {
       }
     })();
   }, []);
+  
 
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
+      var desiredWidth;
+      var desiredHeight;
+
+    if(cameraType==0){
+      desiredWidth = 2200
+      desiredHeight = 1200
+    }
+    else{
+    desiredWidth = 1500
+    desiredHeight = 900
+    }
+  ;
+    console.log(photo.width,photo.height,cameraType);
+
+    // Calculate the origin (X, Y) to center the crop around the image
+    const originX = (photo.width - desiredWidth)/2;
+    const originY = (photo.height - desiredHeight)/2;
+    const cropData = {
+      height: desiredHeight, // Set the desired height
+      originX,  // Set the starting X coordinate for the crop
+      originY,  // Set the starting Y coordinate for the crop
+      width: desiredWidth,  // Set the desired width
+    };
+
+      const manipResult = await manipulateAsync(
+        photo.uri,
+        [{ crop: cropData }],
+        { compress: 1, format: SaveFormat.PNG }
+      );
       setCapturedPhotos([...capturedPhotos, photo]);
-      setImageUri(photo.uri);
+      setImageUri(manipResult.uri);
+      console.log(manipResult.uri);
       setModalVisible1(true);
-      storeImageUri(photo.uri);
+      storeImageUri(manipResult.uri);
       
       //Alert.alert("Photo Taken")
     }
@@ -133,7 +156,7 @@ const CameraPage = ({route}) => {
   const toggleFlashMode = () => {
     setFlashMode(
       flashMode === Camera.Constants.FlashMode.off
-        ? Camera.Constants.FlashMode.torch
+        ? Camera.Constants.FlashMode.off
         : Camera.Constants.FlashMode.off
     );
   };
@@ -175,8 +198,9 @@ const CameraPage = ({route}) => {
             <View style={{}}>
 
             </View>
-            <Image
-        style={{width:250,height:250,backgroundColor:"#0466CB",marginTop:10,marginLeft:15,borderRadius:15,    transform: [{ rotate: '90deg' }],}}
+            {/* transform: [{ rotate: '90deg' }] */}
+            <Image  
+        style={{width:250,height:250,backgroundColor:"#0466CB",marginTop:10,marginLeft:15,borderRadius:15,   }}
         source={{
           // uri: 'https://shorturl.at/myJK5',
           uri: imageUri
@@ -226,8 +250,48 @@ const CameraPage = ({route}) => {
 
    
 
+        {/* style={{ height:"92%",width:"150%"}} */}
+        {isFocused && 
+        <Camera
+          style={{ flex: 1 }}
+          type={cameraType}
+          //ratio="1:1" // Set the aspect ratio to 1:1
+          ref={cameraRef}
+          flashMode={flashMode}
+        >
+           <View style={{height:100,backgroundColor:"white",justifyContent:"center"}}>
 
-        {isFocused && <Camera style={{ height:"92%",width:"150%"}} type={cameraType} ref={cameraRef} flashMode={flashMode}>
+<TouchableOpacity onPress={toggleOrientation}>
+<Ionicons name="arrow-back-outline" size={30} color="black"  style={{marginTop:40,marginLeft:20}}/>
+</TouchableOpacity>
+
+
+     
+
+ </View>
+          <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+            {/* Overlay boundary box */}
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <View style={{ width: 300, height: 200, borderColor: Colors.primary, borderWidth: 2, borderRadius: 10, }} />
+            </View>
+          </View>
+        </Camera>
+      }
+
+{imageUri && (
+        <Image
+          style={{
+           
+            width: 500,
+            height: 200,
+            // Set cropping based on the boundary box position
+            overflow: 'hidden',
+          
+          }}
+          source={{ uri: imageUri }}
+        />
+      )}
+        {/* {isFocused && <Camera style={{ height:"92%",width:"150%"}} type={cameraType} ref={cameraRef} flashMode={flashMode} ratio="2:1">
         
         <View style={{height:100,backgroundColor:"white",justifyContent:"center"}}>
 
@@ -240,17 +304,14 @@ const CameraPage = ({route}) => {
 
         </View>
         
-        {/* <View style={{height:500,backgroundColor:"white",width:"70%",opacity: 0.5,borderWidth:100,borderColor:"black"}}>
-           
-
-           </View> */}
+      
 
 
 
 
         
 
-        </Camera>}
+        </Camera>} */}
         <CameraModal visible={modalVisible} imageUri={imageUri} onClose={closeModal} />
 
 
@@ -469,3 +530,5 @@ const styles = StyleSheet.create({
 ))}
 </ScrollView>
 <Button title="Pick Images" onPress={pickImage} /> */}
+
+

@@ -3,8 +3,8 @@ import { Modal, View, Image, Button,Text } from 'react-native';
 
 const Articles = () => {
   return (
-    <View style={{margin:50}}>
-        <Text>Blogs</Text>
+    <View style={{paddingTop:40,backgroundColor:"blue",flex:1}}>
+        <Text style={{}}>Reports</Text>
     </View>
   );
 };

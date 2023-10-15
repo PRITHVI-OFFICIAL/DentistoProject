@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": ["@react-native-firebase/app", "@react-native-firebase/auth"],
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -21,10 +22,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.prithvi7575.Dentisto"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    
+    "extra": {
+
+  
+      
+      "eas": {
+        "projectId": "7256a95f-bfac-4c46-8eb4-0d0a54b27978"
+      }
     }
   }
 }
