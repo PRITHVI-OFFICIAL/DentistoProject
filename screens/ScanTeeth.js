@@ -142,9 +142,11 @@ const ScanTeeth = () => {
     
     <View style={styles.container}>
 
-<View style={{height:260,justifyContent:"center",alignItems:"center"}}>
+<View style={{height:260}}>
 
-<Text style={{fontSize:22,fontWeight:"bold",textAlign:"center",marginTop:10}}>Scan Now</Text>
+<TouchableOpacity onPress={()=> navigation.navigate('Home')}>
+<Ionicons name="md-arrow-back" size={30} color="#230A94"  style={{marginLeft:20}}/>
+</TouchableOpacity>
 <ScrollView horizontal style={{paddingRight:20}}  pagingEnabled={true} >
 
 <View style={{height:200,backgroundColor:Colors.black,borderRadius:15,width:385,margin:20}}>
@@ -184,7 +186,7 @@ const ScanTeeth = () => {
 <ScrollView style={{marginBottom:10}}>
 
 <View style={{padding:15}}>
-    <View style={{height:550,backgroundColor:Colors.primary,elevation:30,shadowColor:Colors.primary,padding:15,borderRadius:10}}>
+    <View style={{height:600,backgroundColor:Colors.primary,elevation:30,shadowColor:Colors.primary,padding:15,borderRadius:10}}>
 
 <Text style={{fontSize:22,fontWeight:"bold",color:"white"}}>Input Images</Text>
 
@@ -393,8 +395,8 @@ style={{ width: 25, height: 25}}
 
 
 
-<TouchableOpacity onPress={()=> navigation.navigate('Results',{front:front})}>
-<View style={{width:150,height:60,backgroundColor:"#230A94",borderRadius:10,margin:20,alignSelf:"center",justifyContent:"center",alignItems:"center"}}>
+<TouchableOpacity onPress={()=> navigation.navigate('Results',{front:front,left:left,right:right,down:down})}>
+<View style={{width:150,height:60,backgroundColor:"#230A94",borderRadius:10,margin:20,alignSelf:"center",justifyContent:"center",alignItems:"center",marginTop:20}}>
 
 <Text style={{fontSize:15,fontWeight:"bold",color:"white"}}>Scan Now</Text>
 
@@ -436,7 +438,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: 'white',
-      marginTop:45,
+      paddingTop:45,
       width:"100%", 
 
     
@@ -459,4 +461,3 @@ const styles = StyleSheet.create({
     }}
     style={{width:"10%",backgroundColor:"blue"}}
   /> */}
-
