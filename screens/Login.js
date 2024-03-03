@@ -15,10 +15,10 @@ export default function Login({navigation}) {
  
 
   const onHandleLogin = () => {
-    if ((email !== "" && password !== "") && email.split('@')[1]=='sairamtap.edu.in') {
+    if ((email !== "" && password !== "")) {
 
           signInWithEmailAndPassword(auth, email, password)
-          .then(() => navi.navigate('Busroute'))
+          .then(() => navi.navigate('Home'))
           .catch((err) => Alert.alert('Login Failed', `Kindly Check your Mail id and Password`, [
             { text: 'OK' },
           ]));
@@ -61,8 +61,15 @@ export default function Login({navigation}) {
       
 
       <View style={{justifyContent:"center",alignItems:"center"}}  >
-        <TouchableOpacity style={{height:60,width:150,backgroundColor:colors.primary,borderRadius:6,justifyContent:"center",alignItems:"center",margin:20}} onPress={()=> navigation.navigate('Home')}>
+        <TouchableOpacity style={{height:60,width:150,backgroundColor:colors.primary,borderRadius:6,justifyContent:"center",alignItems:"center",margin:20}} onPress={onHandleLogin}>
             <Text style={{fontSize:15,color:"white",fontWeight:"bold"}}>Login</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{flexDirection: 'row', alignItems: 'center', alignSelf: 'center',marginBottom:10}}>
+        <Text style={{color: 'gray', fontWeight: '600', fontSize: 14}}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => navi.navigate('Signup')}>
+          <Text style={{color: colors.primary, fontWeight: '600', fontSize: 14}}> Sign Up</Text>
         </TouchableOpacity>
       </View>
       </View>
@@ -109,3 +116,4 @@ const styles = StyleSheet.create({
   }, 
   
 });
+

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useLayoutEffect } from 'react';
 import { View, Image, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import Colors from '../Colors';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
-
+import { getAuth,signOut} from "firebase/auth";
+import { auth, database } from '../config/firebase'
+import {collection,addDoc,orderBy,query,onSnapshot,setDoc,doc,getDoc,where, updateDoc} from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL ,uploadString,uploadBytes} from "firebase/storage";
 import ResultBox from '../components/ResultBox';
 
 const Results = ({ route }) => {
@@ -12,6 +15,16 @@ const Results = ({ route }) => {
   const {left} = route.params; 
   const {right} = route.params; 
   const {down} = route.params;
+
+  const [mail,setmail] = useState('');
+  const [details,setdetails] = useState('');
+  const [phone,setphone] = useState('');
+  const [name,setname] = useState("Logeshwar SB");
+  const [blood,setblood] = useState(''); 
+  const [habits,sethabits]=useState('');
+  const [age,setage]=useState("");
+  const [gender,setgender]=useState(0);
+  const[behave,setbehave] = useState('')
 
   const [label, setLabel] = useState('');
   const [label1, setLabel1] = useState('');
@@ -33,8 +46,74 @@ const Results = ({ route }) => {
     handleUpload(front,left,right,down);
 
   }, []);
+  
+
+  const currentmail=getAuth()?.currentUser.email;
+  useLayoutEffect(() => {
+    const collectionRef = collection(database, 'Users');
+      const q = query(collectionRef, where("mail", "==", currentmail));
+      const unsubscribe = onSnapshot(q, querySnapshot => {
+        setdetails(
+          querySnapshot.docs.map(doc => 
+            (
+            {
+            mail:doc.data().mail,
+            phone: doc.data().mobile,
+            name:doc.data().name, 
+            age:doc.data().age, 
+            habits:doc.data().habits, 
+            blood:doc.data().blood, 
+            gender:doc.data().gender
+          
+          }))
+        );
+      });        
+      setname(details[0]?.name);
+      setmail(details[0]?.mail);
+      setphone(details[0]?.phone);
+      sethabits(details[0]?.habits);
+      setage(details[0]?.age);
+      setgender(details[0]?.gender);
+      setblood(details[0]?.blood);
+    
+    return unsubscribe;
+    }, 
+    
+    []); 
+    console.log(name);
 
 
+
+
+  function countdisease(){
+    var count=0;
+    if(label!='Your Teeth is Good'){
+      count+=1
+    }
+    if(label1!='Your Teeth is Good'){
+      count+=1
+    }
+    if(label2!='Your Teeth is Good'){
+      count+=1
+    }
+    if(label3!='Your Teeth is Good'){
+      count+=1
+    }
+    return  count;
+  }
+
+  const loc="file:///data/user/0/host.exp.exponent/cache/Print/b64d1c7b-4e7a-43e7-b453-54dfdbb43010.pdf"
+
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    var date = new Date().getDate(); //Current Date
+    var month = new Date().getMonth(); //Current Month
+    var year = new Date().getFullYear(); //Current Year
+    var hours = new Date().getHours(); //Current Hours
+    var min = new Date().getMinutes(); //Current Minutes
+    var sec = new Date().getSeconds(); //Current Seconds
+    var gendate=monthNames[month]+" "+date+", "+year;
+    //console.log(gendate);
   const printToFile = async () => {
     // On iOS/android prints the given html. On web prints the HTML from the current page.
     const { uri } = await Print.printToFileAsync({
@@ -42,6 +121,30 @@ const Results = ({ route }) => {
     });
     console.log('File has been saved to:', uri);
     await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+
+
+              const storage = getStorage();
+              const stringContent = createPdf();
+
+
+              const fileName=`Report_${date}-${month}-${year}_${hours}-${min}-${sec}`;
+              const folderName=`${currentmail?.split("@")[0]}`;
+              const storageRef = ref(storage, `${folderName}/${fileName}`);
+              // Convert the string content into a Blob
+
+              const blob = new Blob([stringContent], { type: 'text/plain' });
+              // Generate a unique filename or use a specific one
+              uploadBytes(storageRef,blob).then((snapshot) => {
+                console.log('Uploaded a blob or file!');
+              });
+             
+          
+        
+
+
+
+
+
   }
 
   var date = new Date().getDate(); //Current Date
@@ -53,7 +156,7 @@ const Results = ({ route }) => {
 
   const createPdf = () => {
 
-    var CurrentTime = date + '/' + month + '/' + year+ ' ' + hours + ':' + min + ':' + sec;
+    //var CurrentTime = date + '/' + month + '/' + year+ ' ' + hours + ':' + min + ':' + sec;
    
   
     var image = '';
@@ -103,13 +206,13 @@ const Results = ({ route }) => {
             <h1 style="font-size: 25px;margin-top: 20px;text-decoration: underline;">PATIENT DETAILS</h1>
             <div style="display: flex;justify-content: space-between; flex-wrap:wrap">
               <div>
-                    <h3 style="font-weight: normal;">Patient name : Prithvi PK</h1>
-                    <h3 style= "font-weight: normal;">Email : prithvipk@gmail.com</h1>
-                    <h3 style="font-weight: normal;">Age : 20</h1>
+                    <h3 style="font-weight: normal;">Patient name : ${name}</h1>
+                    <h3 style= "font-weight: normal;">Email : ${mail}</h1>
+                    <h3 style="font-weight: normal;">Age : ${age}</h1>
                 </div>
                 <div >
-                    <h3 style="font-weight: normal;">Phone Number : +91 7550005350</h1>
-                    <h3 style="font-weight: normal;">Gender : Male</h1>
+                    <h3 style="font-weight: normal;">Phone Number : ${phone}</h1>
+                    <h3 style="font-weight: normal;">Gender : ${gender}</h1>
                     <h3 style="font-weight: normal;">Other Habits : None</h1>
                 </div>
             </div>
@@ -137,10 +240,9 @@ const Results = ({ route }) => {
         </body>
         </html>
         `;
-        console.log(html);
+      
       return html;
     }
-
   const handleUpload = async (front,left,right,down) => {
     const formData = new FormData();
     formData.append('file', {
@@ -181,7 +283,7 @@ const Results = ({ route }) => {
     } catch (error) {
       console.error('Error detecting objects:', error);
     } finally {
-      setLoading(false); // Set loading to false when done
+      //setLoading(false); // Set loading to false when done
     }
 
 
@@ -224,7 +326,7 @@ const Results = ({ route }) => {
     } catch (error) {
       console.error('Error detecting objects:', error);
     } finally {
-      setLoading(false); // Set loading to false when done
+      //setLoading(false); // Set loading to false when done
     }
 
     const formData2 = new FormData();
@@ -266,7 +368,7 @@ const Results = ({ route }) => {
     } catch (error) {
       console.error('Error detecting objects:', error);
     } finally {
-      setLoading(false); // Set loading to false when done
+      //setLoading(false); // Set loading to false when done
     }
 
      const formData3 = new FormData();
@@ -308,9 +410,52 @@ const Results = ({ route }) => {
     } catch (error) {
       console.error('Error detecting objects:', error);
     } finally {
-      setLoading(false); // Set loading to false when done
+      setLoading(false); 
     }
   };
+
+
+//     const storage = getStorage();
+
+//   // Function to upload PDF file to Firebase Storage
+//   async function uploadPDF(pdfFile, folderName, fileName) {
+//     try {
+//         // Construct the full path including folder
+//         const fullPath = folderName ? `${folderName}/${fileName}` : fileName;
+
+//         // Create a reference to the storage path
+//         const storageRef = ref(storage, fullPath);
+
+//         // Upload the file to the specified path
+//         const uploadTask = uploadBytesResumable(storageRef, pdfFile);
+
+//         // Listen for state changes, errors, and completion of the upload.
+//         uploadTask.on('state_changed',
+//             (snapshot) => {
+//                 // Get upload progress
+//                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+//                 console.log('Upload is ' + progress + '% done');
+//             },
+//             (error) => {
+//                 // Handle unsuccessful uploads
+//                 console.error('Error uploading PDF:', error);
+//             },
+//             async () => {
+//                 // Handle successful uploads on complete
+//                 console.log('PDF uploaded successfully');
+//                 // Get download URL of the uploaded file
+//                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+//                 console.log('File available at', downloadURL);
+//             }
+//         );
+//     } catch (error) {
+//         console.error('Error uploading PDF:', error);
+//     }
+// }
+// const pdfFile = "/workspaces/DentistoProject/329dd4db-cb10-4762-ac62-efb4309a7649.pdf";
+// const fileName = 'example.pdf'; // Change this to the desired file name
+// const foldername="test";
+// uploadPDF(pdfFile, foldername,fileName);
 
 
   
@@ -336,13 +481,13 @@ const Results = ({ route }) => {
         Results
       </Text>
           <Text style={{ fontSize: 15, marginLeft: 5, marginBottom: 5 }}>
-            October 11, 2023
+            {gendate}
           </Text>
           </View>
 
           <TouchableOpacity onPress={printToFile}>
           <View style={{width:110,height:35,backgroundColor:'blue',borderRadius:5,justifyContent:'center',marginTop:10}}>
-            <Text style={{fontSize:13,fontWeight:'bold',color:'white',textAlign:'center',}}>Download Report</Text>
+            <Text style={{fontSize:13,fontWeight:'bold',color:'white',textAlign:'center',}}>Generate Report</Text>
           </View>
           </TouchableOpacity>
           </View>
@@ -457,7 +602,7 @@ const Results = ({ route }) => {
             source={require("../assets/tick.png")}
             style={{ width: 25, height: 25 }}
           /> */}
-          <Text style={{fontSize:30,fontWeight:"bold"}}>1</Text>
+          <Text style={{fontSize:30,fontWeight:"bold"}}>{countdisease()}</Text>
       </View>
     </View>
 
@@ -473,7 +618,7 @@ const Results = ({ route }) => {
 
     
   </View>
-  <Text style={{fontSize: 20 ,fontWeight: "bold", color: "white",marginTop:25,marginLeft:5}}>Issues Addressed</Text>
+  <Text style={{fontSize: 20 ,fontWeight: "bold", color: "white",marginTop:15,marginLeft:5}}>Issues Addressed</Text>
 
   <View style={{flexDirection:"row",marginTop:20,flexWrap:'wrap'}}>
 
@@ -497,22 +642,28 @@ const Results = ({ route }) => {
 
   <View style={{width:100,height:30,backgroundColor:"#87bdf4",borderRadius:20,justifyContent:"center",alignItems:"center",marginRight:10,marginBottom:10}}>
 
-  <Text style={{color:"white"}}>Teeth Caries</Text>
+  <Text style={{color:"white"}}>Discoloration</Text>
 
   </View>
 
   <View style={{width:100,height:30,backgroundColor:"#87bdf4",borderRadius:20,justifyContent:"center",alignItems:"center",marginRight:10,marginBottom:10}}>
 
-  <Text style={{color:"white"}}>Maloculasion</Text>
+  <Text style={{color:"white"}}>Ulcer</Text>
+
+  </View> 
+
+  <View style={{width:100,height:30,backgroundColor:"#87bdf4",borderRadius:20,justifyContent:"center",alignItems:"center",marginRight:10,marginBottom:10}}>
+
+<Text style={{color:"white"}}>Plaque</Text>
 
   </View>
 
-  <Text>{label}</Text>
+  {/* <Text>{label}</Text>
 
   <Text>{label1}</Text>
   <Text>{label2}</Text>
   <Text>{label3}</Text>
-  <Text>{label1}</Text>
+  <Text>{label1}</Text> */}
   
   
 

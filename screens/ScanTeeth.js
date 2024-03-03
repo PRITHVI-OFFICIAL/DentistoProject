@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { View, Text, Button, Image, ScrollView, TouchableOpacity ,ImageBackground} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation ,useFocusEffect} from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import Colors from '../Colors';
@@ -17,6 +17,8 @@ const ScanTeeth = () => {
   // const { newText } = route.params || {};
   // const [front,setfront]=useState('h');
   //const [left,setleft]=useState('h');
+
+  const [isclicked,setclicked]=useState(false);
 
   const { frontimage } = route.params || {};
   const { leftimage } = route.params || {};
@@ -64,7 +66,31 @@ const ScanTeeth = () => {
 
   console.log(rightimage);
 
+  const resetState = () => {
+    setfront('h');
+    setleft('h');
+    setright('h');
+    setdown('h');
+  };
 
+  useFocusEffect(
+    useCallback(() => {
+      if (isclicked) {
+        resetState();
+        setclicked(false); // Reset clicked status
+      }
+    }, [isclicked])
+  );
+
+
+
+  function result(){
+
+    setclicked(true);
+    navigation.navigate('Results',{front:front,left:left,right:right,down:down})
+
+
+  }
   const navigation = useNavigation();
   ScreenOrientation.OrientationLock.PORTRAIT;
 
@@ -149,7 +175,7 @@ const ScanTeeth = () => {
 </TouchableOpacity>
 <ScrollView horizontal style={{paddingRight:20}}  pagingEnabled={true} >
 
-<View style={{height:200,backgroundColor:Colors.black,borderRadius:15,width:385,margin:20}}>
+{/* <View style={{height:200,backgroundColor:Colors.black,borderRadius:15,width:385,margin:20}}>
 
 <Image 
    source={require('../assets/scanpage2.png')}
@@ -160,7 +186,7 @@ const ScanTeeth = () => {
 
 
 
-</View> 
+</View>  */}
 
 <View style={{height:200,backgroundColor:'yellow',borderRadius:15,width:385,margin:20}}>
 
@@ -395,7 +421,7 @@ style={{ width: 25, height: 25}}
 
 
 
-<TouchableOpacity onPress={()=> navigation.navigate('Results',{front:front,left:left,right:right,down:down})}>
+<TouchableOpacity onPress={()=> result()}>
 <View style={{width:150,height:60,backgroundColor:"#230A94",borderRadius:10,margin:20,alignSelf:"center",justifyContent:"center",alignItems:"center",marginTop:20}}>
 
 <Text style={{fontSize:15,fontWeight:"bold",color:"white"}}>Scan Now</Text>

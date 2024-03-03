@@ -1,15 +1,25 @@
-import React,{useState} from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { Component,useLayoutEffect, useState,useEffect } from 'react';
+import {StyleSheet,Text,View,Image,Button,TouchableOpacity,TextInput} from 'react-native';
 import RadioForm from 'react-native-simple-radio-button';
+import { useNavigation } from '@react-navigation/native';
+import { getAuth,signOut} from "firebase/auth";
+import { FontAwesome } from '@expo/vector-icons';
+import colors from '../Colors';
+import { auth, database } from '../config/firebase'
+import {collection,addDoc,orderBy,query,onSnapshot,setDoc,doc,getDoc,where, updateDoc} from 'firebase/firestore';
+
 
 export default function UserProfile() {
+  const [details,setdetails]=useState('');
   const [mail,setmail] = useState('');
   const [phone,setphone] = useState('');
   const [pass,setpass] = useState('');
-  const [name,setname] = useState("Logeshwar SB")
+  const [name,setname] = useState("Logeshwar SB");
   const [edit,setedit] = useState(false);
-  const [blood,setblood] = useState('')
+  const [blood,setblood] = useState(''); 
+  const [habits,sethabits]=useState('');
+  const [age,setage]=useState("");
+  const [gender,setgender]=useState(0);
   const[behave,setbehave] = useState('')
   const [showtext,setshowtext] = useState('');
 
@@ -18,26 +28,68 @@ export default function UserProfile() {
     {label: 'Non-Smoker', value: 1 },
     {label: 'Others', value: 2 }
   ];
-  function findLabelByValue(value) {
-    for (var i = 0; i < radio_props.length; i++) {
-      if(radio_props[i].value==2){
-        return behave;
-      }
-      if (radio_props[i].value === value) {
-        return radio_props[i].label;
-      }
-    }
-    return null;
-  }
+  const currentmail=getAuth()?.currentUser.email;
 
-  //console.log(findLabelByValue(behave)); 
-  // <TouchableOpacity onPress={()=>setedit(!edit)} style={{marginLeft:55,backgroundColor:'#53A1EF',width:50,height:25,borderRadius:10}}>
-  //         <Text style={{textAlign:'center',color:'white',fontWeight:'bold',marginTop:2}}>{edit ? 'Save' : 'Edit'}</Text>
-  //         </TouchableOpacity>
+  useLayoutEffect(() => {
+    const collectionRef = collection(database, 'Users');
+    const q = query(collectionRef, where("mail", "==", currentmail));
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      const userDetails = querySnapshot.docs.map(doc => ({
+        mail: doc.data().mail,
+        phone: doc.data().mobile,
+        name: doc.data().name,
+        age: doc.data().age,
+        habits: doc.data().habits,
+        blood: doc.data().blood,
+        gender: doc.data().gender
+      }));
+      setdetails(userDetails);
+      // Move the state setting logic inside the onSnapshot callback
+      if (userDetails.length > 0) {
+        setname(userDetails[0].name);
+        setmail(userDetails[0].mail);
+        setphone(userDetails[0].phone);
+        sethabits(userDetails[0].habits);
+        setage(userDetails[0].age);
+        setgender(userDetails[0].gender);
+        setblood(userDetails[0].blood);
+      }
+    });
+  
+    return unsubscribe;
+  }, []);
+// console.log(details[0].name,'----');
+//console.log(name,"0000");
+//console.log(details,"---<");
+console.log(name);
+console.log(mail);
+console.log(phone);
+
+
+
+
+function editsubmit() {
+  useEffect(() => {
+    const collectionRef = collection(database, 'Users');
+
+    setDoc(doc(collectionRef, currentmail.split('@')[0]), {
+      mail: mail,
+      phone: phone,
+      name: name,
+      age: age,
+      habits: habits,
+      blood: blood,
+      gender: gender,
+    });
+
+    console.log('Data Uploaded Successfully');
+  }, []); // Empty dependency array means this effect runs once after the initial render
+}
+
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      
       <View style={styles.navbar}>
         <Image source={{uri:'https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/rm328-366-tong-08_1.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=6a37204762fdd64612ec2ca289977b5e'}} style={styles.image} />
       </View>
@@ -46,12 +98,23 @@ export default function UserProfile() {
       <View style={{padding:20}}>
       <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:30}} >
      <Text style={styles.usertext}>User Information</Text>
-      <TouchableOpacity onPress={()=>setedit(!edit)} >
+     {  !edit && 
+        (<TouchableOpacity onPress={()=>setedit(!edit)} >
         <View style={{backgroundColor:'#53A1EF',width:50,height:25,borderRadius:10}}>
-        <Text style={{textAlign:'center',color:'white',fontWeight:'bold',marginTop:2}}>{edit ? 'Save' : 'Edit'}</Text>
-        </View>
-          
-          </TouchableOpacity>
+        <Text style={{textAlign:'center',color:'white',fontWeight:'bold',marginTop:2}}>{'Edit'}</Text>
+        </View>   
+        </TouchableOpacity>)
+    }
+
+    {edit && 
+     (<TouchableOpacity onPress={editsubmit} >
+     <View style={{backgroundColor:'#53A1EF',width:50,height:25,borderRadius:10}}>
+     <Text style={{textAlign:'center',color:'white',fontWeight:'bold',marginTop:2}}>{'Save'}</Text>
+     </View>
+       
+   </TouchableOpacity>)
+
+    }
      
       
       </View>
@@ -63,7 +126,7 @@ export default function UserProfile() {
 
               <View style={[styles.loginbox,{marginLeft:10}]}>
           <TextInput
-           placeholder='Enter your Blood Group'
+           placeholder='Enter your Name'
            autoCapitalize="none"
            value={name}
            editable={edit}
@@ -93,7 +156,7 @@ export default function UserProfile() {
           <TextInput
            placeholder='Enter your Email'
            autoCapitalize="none"
-           value="logeshwarsec@gmail.com"
+           value={mail}
            editable={edit}
            style={{marginLeft:3}}
            onChangeText={(value)=>setmail(value)}
@@ -131,7 +194,7 @@ export default function UserProfile() {
           <TextInput
            placeholder='Enter your Mobile'
            autoCapitalize="none"
-           value="8667075377"
+           value={phone}
            editable={edit}
            style={{marginLeft:3}}
            onChangeText={(value)=>setphone(value)}
@@ -160,12 +223,13 @@ export default function UserProfile() {
 
               <View style={[styles.loginbox1,{marginLeft:25}]}>
           <TextInput
-            placeholder="Edit your Name"
+            placeholder="Age"
             autoCapitalize="none"
-            value="20"
+            value={age}
             inputMode='numeric'
             editable={edit}
             style={{marginLeft:3}}
+            onChangeText={(value)=>setage(value)}
           
            />
       </View>
@@ -191,9 +255,10 @@ export default function UserProfile() {
           <TextInput
            placeholder="Edit your Gender"
            autoCapitalize="none"
-           value="male"
+           value={gender}
            editable={edit}
            style={{marginLeft:3}}
+           onChangeText={(value)=>setgender(value)}
           
            />
       </View>
@@ -201,13 +266,6 @@ export default function UserProfile() {
             </View> 
         </View>
     </View>
-    {/* <View style={[styles.loginbox,{marginTop:20,}]}>
-          <TextInput
-           placeholder='Enter your Blood Group'
-           style={{}}
-           onChange={(value)=>setblood(value)}
-           />
-      </View> */}
 
 <View style={{flexDirection:'row',marginTop:20}}>
               <Text style={{marginTop:10}}>Blood Group:</Text>
@@ -216,10 +274,10 @@ export default function UserProfile() {
           <TextInput
            placeholder="Edit your Blood Group"
            autoCapitalize="none"
-           value="male"
+           value={blood}
            editable={edit}
            style={{marginLeft:3}}
-          
+           onChangeText={(value)=>setblood(value)}
            />
       </View>
             
@@ -247,7 +305,7 @@ export default function UserProfile() {
           <TextInput
             placeholder="Please Specify Other Habits"
             
-            onChangeText={(value) => setbehave(value)} 
+            onChangeText={(value) => sethabits(value)} 
           />
         </View>
       )}

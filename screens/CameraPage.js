@@ -241,14 +241,9 @@ const CameraPage = ({route}) => {
         onPress={() => setModalVisible1(true)}>
         <Text style={styles.textStyle}>Show Modal</Text>
       </Pressable> */}
-
-
         {/* <Text>Hii</Text> */}
 
 
-       
-
-   
 
         {/* style={{ height:"92%",width:"150%"}} */}
         {isFocused && 
@@ -277,7 +272,7 @@ const CameraPage = ({route}) => {
           </View>
         </Camera>
       }
-
+{/* 
 {imageUri && (
         <Image
           style={{
@@ -290,7 +285,7 @@ const CameraPage = ({route}) => {
           }}
           source={{ uri: imageUri }}
         />
-      )}
+      )} */}
         {/* {isFocused && <Camera style={{ height:"92%",width:"150%"}} type={cameraType} ref={cameraRef} flashMode={flashMode} ratio="2:1">
         
         <View style={{height:100,backgroundColor:"white",justifyContent:"center"}}>
